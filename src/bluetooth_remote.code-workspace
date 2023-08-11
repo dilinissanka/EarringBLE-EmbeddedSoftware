@@ -1,0 +1,26 @@
+{
+	"folders": [
+		{
+			"name": "bluetooth_remote",
+			"path": ".."
+		},
+		{
+			"name": "hello_world_nrf52",
+			"path": "../../hello_world_nrf52"
+		},
+		{
+			"name": "LIS2DW12",
+			"path": "../../LIS2DW12"
+		},
+		{
+			"name": "my_max30101",
+			"path": "../../my_max30101"
+		}
+	],
+	"settings": {
+		"nrf-connect.toolchain.path": "${nrf-connect.toolchain:2.3.0}",
+		"nrf-connect.applications": [
+			"c:\\Users\\dil-p\\OneDrive\\Documents\\nrf_connectsdk\\my_max30101"
+		]
+	}
+}
