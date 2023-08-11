@@ -7,7 +7,7 @@
 
 static K_SEM_DEFINE(bt_init_ok, 1, 1);
 
-static int8_t data[240] = {0};
+static int8_t data[238] = {0};
 //static uint8_t button_value = 5;
 
 enum bt_button_notifications_enabled notifications_enabled;
@@ -125,7 +125,7 @@ int send_button_notification(struct bt_conn *conn)
 
     params.attr = attr;
     params.data = &data;
-    params.len = 240;
+    params.len = 238;
     params.func = on_sent;
 
 
@@ -136,7 +136,7 @@ int send_button_notification(struct bt_conn *conn)
 
 void set_accel_status(int8_t x_int, int8_t x_dec, int8_t y_int, int8_t y_dec, int8_t z_int, int8_t z_dec, int8_t ppg, int count)
 {
-    int factor = count * 6;
+    int factor = count * 7;
     data[factor] = x_int;
     data[factor+1] = x_dec;
     data[factor+2] = y_int;

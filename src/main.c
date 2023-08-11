@@ -111,7 +111,7 @@ void accel_update()
 	sensor_sample_fetch(dev);
 	sensor_channel_get(dev, SENSOR_CHAN_IR, &ir);
 	set_accel_status((int8_t)acc[0].val1,(int8_t)acc[0].val2, (int8_t)acc[1].val1, (int8_t)acc[1].val2, (int8_t)acc[2].val1, (int8_t)acc[2].val2, (int8_t) ir.val1, count);
-	if(count == 39) {
+	if(count == 33) {
 		send_button_notification(current_conn);
 	}
 }
@@ -148,7 +148,7 @@ void main(void)
 	//k_timer_start(&mytimer, K_MSEC(20), K_MSEC(20));
 	for (;;) {
 		accel_update();
-		if(count == 39) {
+		if(count == 33) {
 			count = -1;
 		}
 		//dk_set_led(RUN_STATUS_LED, (blink_status++%2));
