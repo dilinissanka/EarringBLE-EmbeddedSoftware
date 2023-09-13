@@ -109,7 +109,8 @@ void accel_update()
 	sensor_sample_fetch(lis2dw12);
 	sensor_channel_get(lis2dw12, SENSOR_CHAN_ACCEL_XYZ, acc);
 	sensor_sample_fetch(dev);
-	sensor_channel_get(dev, SENSOR_CHAN_IR, &ir);
+	sensor_channel_get(dev, SENSOR_CHAN_GREEN, &ir);
+	printk("%d\n", ir.val1);
 	set_accel_status((int8_t)acc[0].val1,(int8_t)acc[0].val2, (int8_t)acc[1].val1, (int8_t)acc[1].val2, (int8_t)acc[2].val1, (int8_t)acc[2].val2, (int8_t) ir.val1, count);
 	if(count == 33) {
 		send_button_notification(current_conn);

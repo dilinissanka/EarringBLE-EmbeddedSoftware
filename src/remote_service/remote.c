@@ -143,7 +143,7 @@ void set_accel_status(int8_t x_int, int8_t x_dec, int8_t y_int, int8_t y_dec, in
     data[factor+3] = y_dec;
     data[factor+4] = z_int;
     data[factor+5] = z_dec;
-    data[factor+6] = ppg;
+    data[factor+6] = count;
 }
 
 int bluetooth_init(struct bt_conn_cb *bt_cb, struct bt_remote_service_cb *remote_cb)
@@ -166,7 +166,7 @@ int bluetooth_init(struct bt_conn_cb *bt_cb, struct bt_remote_service_cb *remote
     
     k_sem_take(&bt_init_ok, K_FOREVER);
 
-    err = bt_le_adv_start(BT_LE_ADV_CONN/*BT_LE_ADV_PARAM(BIT(1),0x00f0, 0x00f0, NULL)*/, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+    err = bt_le_adv_start(/*BT_LE_ADV_CONN*/BT_LE_ADV_PARAM((BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME),16000, 16004, NULL), ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
     if (err) {
         printk("Couldn't start advertising (err = %d)", err);
         return err;
