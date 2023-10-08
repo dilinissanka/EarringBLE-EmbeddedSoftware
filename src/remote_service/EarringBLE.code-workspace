@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"name": "EarringBLE_SensorNA",
+			"path": "../../../EarringBLE_SensorNA"
+		}
+	],
+	"settings": {}
+}

@@ -15,13 +15,13 @@
 #define CONN_STATUS_LED DK_LED2
 #define RUN_LED_BLINK_INTERVAL 20
 
-int count = 0;
+bool connected = false;
+int count = -1;
+int val = -1;
 static struct bt_conn *current_conn;
 
-struct device *const dev = DEVICE_DT_GET_ANY(maxim_max30101);
 struct device *lis2dw12 = DEVICE_DT_GET_ANY(st_lis2dw12);
-struct k_timer mytimer;
-struct k_work lis2dw12_work;
+const struct device *const dev = DEVICE_DT_GET_ANY(maxim_max30101);
 
 /* Declarations */
 void on_connected(struct bt_conn *conn, uint8_t err);
@@ -43,9 +43,6 @@ struct bt_remote_service_cb remote_callbacks = {
 /* Callbacks */
 
 
-static void mytimer_cb(struct k_timer *dummy) {
-	k_work_submit(&lis2dw12_work);
-}
 
 void on_connected(struct bt_conn *conn, uint8_t err)
 {
@@ -83,7 +80,7 @@ void on_notif_changed(enum bt_button_notifications_enabled status)
 	}
 	else {
 		printk("Notificatons disabled");
-	}
+	} 
 }
 
 void on_data_received(struct bt_conn *conn, const uint8_t *const data, uint16_t len)
@@ -109,9 +106,8 @@ void accel_update()
 	sensor_sample_fetch(lis2dw12);
 	sensor_channel_get(lis2dw12, SENSOR_CHAN_ACCEL_XYZ, acc);
 	sensor_sample_fetch(dev);
-	sensor_channel_get(dev, SENSOR_CHAN_GREEN, &ir);
-	printk("%d\n", ir.val1);
-	set_accel_status((int8_t)acc[0].val1,(int8_t)acc[0].val2, (int8_t)acc[1].val1, (int8_t)acc[1].val2, (int8_t)acc[2].val1, (int8_t)acc[2].val2, (int8_t) ir.val1, count);
+	sensor_channel_get(dev, SENSOR_CHAN_IR, &ir);
+	set_accel_status((int8_t)acc[0].val1,(int8_t)acc[0].val2, (int8_t)acc[1].val1, (int8_t)acc[1].val2, (int8_t)acc[2].val1, (int8_t)acc[2].val2, (int8_t)ir.val1, count);
 	if(count == 33) {
 		send_button_notification(current_conn);
 	}
@@ -128,6 +124,14 @@ void main(void)
 	int err;
 	int blink_status = 0;
 	printk("Hello World! %s\n", CONFIG_BOARD);
+	err = bluetooth_init(&bluetooth_callbacks, &remote_callbacks);
+	if (err) {
+		printk("bt_enable returned %d", err);
+	}
+	printk("Running...");
+	//k_work_init(&lis2dw12_work,accel_update);
+	//k_timer_init(&mytimer, mytimer_cb,NULL);
+	//k_timer_start(&mytimer, K_MSEC(20), K_MSEC(20));
 
 	if(!device_is_ready(lis2dw12)) {
 		printk("lis2dw12 device is not ready\n");
@@ -139,19 +143,16 @@ void main(void)
 		return;
 	}
 
-	err = bluetooth_init(&bluetooth_callbacks, &remote_callbacks);
-	if (err) {
-		printk("bt_enable returned %d", err);
-	}
-	printk("Running...");
-	//k_work_init(&lis2dw12_work,accel_update);
-	//k_timer_init(&mytimer, mytimer_cb,NULL);
-	//k_timer_start(&mytimer, K_MSEC(20), K_MSEC(20));
+    /*for(int i = 0; i < 10; i++){
+		k_sleep(K_MSEC(1000));
+	}*/
+
 	for (;;) {
 		accel_update();
 		if(count == 33) {
 			count = -1;
 		}
+
 		//dk_set_led(RUN_STATUS_LED, (blink_status++%2));
 		k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
 		//k_sleep(K_MSEC(2000));

@@ -10,26 +10,26 @@
 
 // For more help, browse the DeviceTree documentation at https://docs.zephyrproject.org/latest/guides/dts/index.html
 // You can also visit the nRF DeviceTree extension documentation at https://nrfconnect.github.io/vscode-nrf-connect/devicetree/nrfdevicetree.html
-// To get started, press Ctrl+Space to bring up the completion menu and view the available nodes.
-
-// You can also use the buttons in the sidebar to perform actions on nodes.
-// Actions currently available include:
-
-// * Enabling / disabling the node
-// * Adding the bus to a bus
-// * Removing the node
-// * Connecting ADC channels
-
-// For more help, browse the DeviceTree documentation at https://docs.zephyrproject.org/latest/guides/dts/index.html
-// You can also visit the nRF DeviceTree extension documentation at https://nrfconnect.github.io/vscode-nrf-connect/devicetree/nrfdevicetree.html
-&i2c1{
-    compatible = "nordic,nrf-twim";
-	status = "okay";
+&i2c0{
+    /*status = "okay";
     lis2dw12@19 {
         compatible  = "st,lis2dw12";
         reg = <0x19>;
         label = "LIS2DW12";
-        int-pin = < 1 >;
+    };*/
+    max30101@57 {
+        compatible = "maxim,max30101";
+        reg = <0x57>;
+        label = "MAX30101";
+    };
+};
+
+&i2c1{
+    status = "okay";
+    lis2dw12@19 {
+        compatible  = "st,lis2dw12";
+        reg = <0x19>;
+        label = "LIS2DW12";
     };
 };
 

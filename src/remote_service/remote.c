@@ -143,7 +143,7 @@ void set_accel_status(int8_t x_int, int8_t x_dec, int8_t y_int, int8_t y_dec, in
     data[factor+3] = y_dec;
     data[factor+4] = z_int;
     data[factor+5] = z_dec;
-    data[factor+6] = count;
+    data[factor+6] = ppg;
 }
 
 int bluetooth_init(struct bt_conn_cb *bt_cb, struct bt_remote_service_cb *remote_cb)
