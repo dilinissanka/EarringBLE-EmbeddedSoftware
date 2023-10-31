@@ -134,7 +134,7 @@ int send_button_notification(struct bt_conn *conn)
     return err;
 }
 
-void set_accel_status(uint8_t x_int, uint8_t x_dec, uint8_t y_int, uint8_t y_dec, uint8_t z_int, uint8_t z_dec, uint16_t ppg, int count)
+void set_accel_status(int8_t x_int, int8_t x_dec, int8_t y_int, int8_t y_dec, int8_t z_int, int8_t z_dec, uint16_t ppg, int count)
 {
     uint8_t factor = count * 8;
     /*data[factor] = x_int;
