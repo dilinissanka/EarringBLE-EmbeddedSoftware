@@ -7,7 +7,7 @@
 
 static K_SEM_DEFINE(bt_init_ok, 1, 1);
 
-static uint8_t data[240] = {0};
+static uint8_t data[60];
 //static uint8_t button_value = 5;
 
 enum bt_button_notifications_enabled notifications_enabled;
@@ -125,7 +125,7 @@ int send_button_notification(struct bt_conn *conn)
 
     params.attr = attr;
     params.data = &data;
-    params.len = 240;
+    params.len = 60;
     params.func = on_sent;
 
 
@@ -134,7 +134,14 @@ int send_button_notification(struct bt_conn *conn)
     return err;
 }
 
-void set_accel_status(int8_t x_int, int8_t x_dec, int8_t y_int, int8_t y_dec, int8_t z_int, int8_t z_dec, uint16_t ppg, int count)
+void set_ppg(uint8_t ppg[]) {
+    for(int i = 0; i < 60; i++) {
+        data[i] = ppg[i];
+    }
+
+}
+
+void set_accel_status(uint8_t x_int, uint8_t x_dec, uint8_t y_int, uint8_t y_dec, uint8_t z_int, uint8_t z_dec, uint16_t ppg, int count)
 {
     uint8_t factor = count * 8;
     /*data[factor] = x_int;
@@ -180,8 +187,5 @@ int bluetooth_init(struct bt_conn_cb *bt_cb, struct bt_remote_service_cb *remote
         printk("Couldn't start advertising (err = %d)", err);
         return err;
     }
-
-
-
     return err;
 }
