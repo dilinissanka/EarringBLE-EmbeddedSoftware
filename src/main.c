@@ -93,7 +93,7 @@ void on_data_received(struct bt_conn *conn, const uint8_t *const data, uint16_t 
 }
 
 
-void accel_update()
+void accel_updatev1()
 {
 	// save it to a buffer, when reach certain length send, 240 max - done
 	// measure current & put in shared slides, average current is 1.36 mA
@@ -111,6 +111,25 @@ void accel_update()
 	if(count == 29) {
 		send_button_notification(current_conn);
 	}
+}
+
+void accel_updatev2()
+{
+	uint8_t data[240] = {0};
+	for(int i = 0; i < 30; i++) {
+		//data[i] = 0xFF;
+		struct sensor_value acc[3];
+	 	struct sensor_value ir;
+	 	sensor_sample_fetch(dev);
+	 	sensor_channel_get(dev, SENSOR_CHAN_IR, &ir);
+	 	uint16_t ppg = (uint16_t)ir.val1;
+	 	data[i*2] = (ppg >> 8) & 0xFF;
+	 	data[(i * 2) + 1] = ppg & 0xFF;
+	}
+	set_ppg(data);
+	send_button_notification(current_conn);
+	//60 bytes
+	
 }
 
 
@@ -148,14 +167,13 @@ void main(void)
 	}*/
 
 	for (;;) {
-		accel_update();
-		if(count == 29) {
+		accel_updatev2();
+		/*if(count == 29) {
 			count = -1;
-		}
+		}*/
 
-		//dk_set_led(RUN_STATUS_LED, (blink_status++%2));
-		k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
-		//k_sleep(K_MSEC(2000));
+		//k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
+		k_sleep(K_MSEC(600));
 	}
 	//k_timer_stop(&mytimer);
 }
