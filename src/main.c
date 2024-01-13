@@ -22,8 +22,10 @@ int val = -1;
 static struct bt_conn *current_conn;
 
 struct device *lis2dw12 = DEVICE_DT_GET_ANY(st_lis2dw12);
-struct device *accel = DEVICE_DT_GET(DT_NODELABEL(i2c1));
+//struct device *accel = DEVICE_DT_GET(DT_NODELABEL(i21));
+struct device *accel = DEVICE_DT_GET_ANY(st_lis2dw12);
 const struct device *const dev = DEVICE_DT_GET_ANY(maxim_max30101);
+const struct device *const hdc2010 = DEVICE_DT_GET_ANY(ti_hdc2010);
 
 /* Declarations */
 void on_connected(struct bt_conn *conn, uint8_t err);
@@ -117,24 +119,31 @@ void accel_updatev1()
 
 void ppg()
 {
-	uint8_t data[240] = {0};
-	for(int i = 0; i < 30; i++) {
+	uint8_t data[200] = {0};
+	for(int i = 0; i < 20; i++) {
 		//data[i] = 0xFF;
 		struct sensor_value acc[3];
 	 	struct sensor_value ir;
+		struct sensor_value temp;
 		sensor_sample_fetch(lis2dw12);
 		sensor_channel_get(lis2dw12, SENSOR_CHAN_ACCEL_XYZ, acc);
 	 	sensor_sample_fetch(dev);
 	 	sensor_channel_get(dev, SENSOR_CHAN_IR, &ir);
-	 	uint16_t ppg = (uint16_t)ir.val1;
-	 	data[i*8] = (ppg >> 8) & 0xFF;
-	 	data[(i * 8) + 1] = ppg & 0xFF;
-		data[(i*8) + 2] = (uint8_t)(acc[0].val1 & 0xFF);
-		data[(i*8) + 3] = (uint8_t)(acc[0].val2 & 0xFF);
-		data[(i*8) + 4] = (uint8_t)(acc[1].val1 & 0xFF);
-		data[(i*8) + 5] = (uint8_t)(acc[1].val2 & 0xFF);
-		data[(i*8) + 6] = (uint8_t)(acc[2].val1 & 0xFF);
-		data[(i*8) + 7] = (uint8_t)(acc[2].val2 & 0xFF);
+		sensor_sample_fetch(hdc2010);
+		sensor_channel_get(hdc2010, SENSOR_CHAN_AMBIENT_TEMP, &temp);
+	 	uint16_t ppg_data = (uint16_t)ir.val1;
+	 	data[i*10] = (ppg_data >> 8) & 0xFF;
+	 	data[(i*10) + 1] = ppg_data & 0xFF;
+		data[(i*10) + 2] = (uint8_t)(acc[0].val1 & 0xFF);
+		data[(i*10) + 3] = (uint8_t)(acc[0].val2 & 0xFF);
+		data[(i*10) + 4] = (uint8_t)(acc[1].val1 & 0xFF);
+		data[(i*10) + 5] = (uint8_t)(acc[1].val2 & 0xFF);
+		data[(i*10) + 6] = (uint8_t)(acc[2].val1 & 0xFF);
+		data[(i*10) + 7] = (uint8_t)(acc[2].val2 & 0xFF);
+
+		data[(i*10) + 8] = (uint8_t)(temp.val1 & 0xFF);
+		data[(i*10) + 9] = (uint8_t)(temp.val2 & 0xFF);
+
 	}
 	set_ppg(data);
 	send_button_notification(current_conn);
@@ -163,10 +172,19 @@ void main(void)
 		return;
 	}
 
+	if (!device_is_ready(hdc2010)) {
+		return;
+	}
 
-	uint8_t buf[2] = {0x2E, 0xD0};
+
+	/*uint8_t buf[2] = {0x2E, 0xD0};
 	int ret = i2c_write(accel, buf, 2, 0x19);
 	if(ret != 0) {
+		return;
+	}*/
+
+	if (!device_is_ready(dev)) {
+		printf("max30101 device %s is not ready\n", dev->name);
 		return;
 	}
 
@@ -178,12 +196,24 @@ void main(void)
 
 	// send data to register where i enable fifo
 
-	if (!device_is_ready(dev)) {
-		printf("max30101 device %s is not ready\n", dev->name);
-		return;
-	}
+	
+
+    /*for(int i = 0; i < 10; i++){
+		k_sleep(K_MSEC(1000));
+	}*/
+
 	for (;;) {
+		
+		/*if(count == 29) {
+			count = -1;
+		}*/
 		ppg();
-		k_sleep(K_MSEC(600));
+		/*if(count == 30) {
+			ppg();
+			count = 0;
+		}
+		count++;*/
+		k_sleep(K_MSEC(400));
 	}
+	//k_timer_stop(&mytimer);
 }
