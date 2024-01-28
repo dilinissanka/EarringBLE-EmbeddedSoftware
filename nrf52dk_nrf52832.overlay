@@ -13,33 +13,33 @@
 &i2c0{
     //status = "okay";
     //status = "okay";
-    lis2dw12@19 {
+    /*lis2dw12@19 {
         compatible  = "st,lis2dw12";
         reg = <0x19>;
         label = "LIS2DW12";
-    };
+    };*/
     max30101@57 {
         compatible = "maxim,max30101";
         reg = <0x57>;
         label = "MAX30101";
-    };
+    };/*
     ti_hdc@40 {
         compatible = "ti,hdc2010";
         reg = <0x40U>;
         label = "HDC2010";
-    };
+    };*/
     status = "okay";
-    //pinctrl-0 = <&i2c0_default>;
+    pinctrl-0 = <&i2c0_default>;
 };
 
-/*&pinctrl {
+&pinctrl {
     i2c0_default: i2c0_default {
         group1 {
             psels = <NRF_PSEL(TWIM_SDA, 0, 16)>,
                 <NRF_PSEL(TWIM_SCL, 0, 14)>;
         };
     };
-};*/
+};
 
 /*&i2c1{
     
@@ -49,3 +49,12 @@
 &uart0 {
     status = "disabled";
 };
+
+
+
+
+
+// measuure the voltage that gets connected to the sensor
+// just connect the voltage
+// after connecting the voltage, measure the current consumption of sensor using multimeter for both sensors
+// 
