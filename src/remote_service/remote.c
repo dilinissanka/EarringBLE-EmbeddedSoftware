@@ -45,10 +45,10 @@ void MTU_exchange_cb(struct bt_conn *conn, uint8_t err, struct bt_gatt_exchange_
 {
     uint16_t payload_length;
 	if (!err) {
-		printk("MTU exchange done. "); 
+		//printk("MTU exchange done. "); 
 		payload_length=bt_gatt_get_mtu(conn)-3; //3 bytes ATT header
 	} else {
-		printk("MTU exchange failed (err %" PRIu8 ")", err);
+		//printk("MTU exchange failed (err %" PRIu8 ")", err);
 	}
 }
 
@@ -60,9 +60,9 @@ void request_mtu_exchange(struct bt_conn *conn)
 
 	err = bt_gatt_exchange_mtu(conn, &exchange_params);
 	if (err) {
-		printk("MTU exchange failed (err %d)", err);
+		//printk("MTU exchange failed (err %d)", err);
 	} else {
-		printk("MTU exchange pending");
+		//printk("MTU exchange pending");
 	}
 
 }
@@ -92,7 +92,7 @@ static void exchange_func(struct bt_conn *conn, uint8_t att_err,
 void on_sent(struct bt_conn *conn, void *user_data)
 {
     ARG_UNUSED(user_data);
-    printk("Notification sent on connection %p", (void *)conn);
+    //printk("Notification sent on connection %p", (void *)conn);
 }
 
 static ssize_t read_accel_characteristic_cb(struct bt_conn *conn, const struct bt_gatt_attr *attr,
@@ -105,7 +105,7 @@ static ssize_t read_accel_characteristic_cb(struct bt_conn *conn, const struct b
 void accel_chrc_ccc_cfg_changed(const struct bt_gatt_attr *attr, uint16_t value)
 {
     bool notif_enabled = (value == BT_GATT_CCC_NOTIFY);
-    printk("Notifications %s", notif_enabled? "enabled":"disabled");
+    //printk("Notifications %s", notif_enabled? "enabled":"disabled");
 
     notifications_enabled = notif_enabled? BT_BUTTON_NOTIFICATIONS_ENABLED:BT_BUTTON_NOTIFICATIONS_DISABLED;
     if (remote_callbacks.notif_changed) {
@@ -165,7 +165,7 @@ void set_accel_status(uint8_t x_int, uint8_t x_dec, uint8_t y_int, uint8_t y_dec
 int bluetooth_init(struct bt_conn_cb *bt_cb, struct bt_remote_service_cb *remote_cb)
 {
     int err;
-    printk("Initializing bluetooth...");
+    //printk("Initializing bluetooth...");
 
     if (bt_cb == NULL || remote_cb == NULL) {
         return -NRFX_ERROR_NULL;
@@ -176,7 +176,7 @@ int bluetooth_init(struct bt_conn_cb *bt_cb, struct bt_remote_service_cb *remote
 
     err = bt_enable(NULL);
     if (err) {
-        printk("bt_enable returned %d", err);
+        //printk("bt_enable returned %d", err);
         return err;
     }
     
@@ -184,7 +184,7 @@ int bluetooth_init(struct bt_conn_cb *bt_cb, struct bt_remote_service_cb *remote
 
     err = bt_le_adv_start(BT_LE_ADV_CONN/*BT_LE_ADV_PARAM((BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_ONE_TIME),160, 200, NULL)*/, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
     if (err) {
-        printk("Couldn't start advertising (err = %d)", err);
+        //printk("Couldn't start advertising (err = %d)", err);
         return err;
     }
 
